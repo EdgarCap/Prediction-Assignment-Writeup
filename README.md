@@ -5,6 +5,20 @@ In this project, we will use data from accelerometers on the belt, forearm, arm,
 The data consists of a Training data and a Test data (to be used to validate the selected model).
 The goal of your project is to predict the manner in which they did the exercise. This is the “classe” variable in the training set. You may use any of the other variables to predict with.
 
+## Prediction of the exercice
+
+The variable "classe" in the training is set with this value:
+
+* "A" the exercice is done arrcording to specification 
+
+* "B" the exercice is done throwing the elbows to the front
+
+* "C" the exercice is done lifting the dumbbell only halfway
+
+* "D" the exercice is donelowering the dumbbell only halfway 
+
+* "E"  the exercice is done throwing the hips to the front 
+
 ## Data 
 The training data for this project are available here: 
 
