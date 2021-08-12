@@ -1,0 +1,155 @@
+---
+title: "Prediction Model"
+author: "S.E Capozzi"
+date: "12/8/2021"
+output: html_document
+---
+
+# Library
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(caret)
+library(rpart)
+library(rpart.plot)
+library(RColorBrewer)
+library(rattle)
+library(randomForest)
+library(e1071)
+library(gbm)
+```
+
+# Project goal
+
+Create a model to predict the variable "classe" in 20 different test cases
+
+# Data
+
+The are two file for the project:
+
+1. The training that is available at: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
+
+2. The test that is available at: https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
+
+The data for this project come from this source: http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har if use please reference.
+
+
+## 1. Load the data to analyze and normalize values
+
+```{r}
+set.seed(12345)
+url="https://d396qusza40orc.cloudfront.net/predmachlearn/"
+file_trainging = "pml-training.csv"
+file_testing   = "pml-testing.csv"
+
+download.file(paste0(url,file_trainging), dest=file_trainging, mode="wb")
+download.file(paste0(url,file_testing),   dest=file_testing,  mode="wb")
+
+training <- read.csv(file_trainging, na.strings=c("NA","#DIV/0!",""))
+testing  <- read.csv(file_testing, na.strings=c("NA","#DIV/0!",""))
+head(training)
+head(testing)
+str(training)
+str(testing)
+
+
+```
+## 2. Remove not significant variables 
+
+Preparing the data considering training data into 70% as train data and 30% as test data. 
+
+
+```{r}
+#Remove variables with near zero variance
+training<-training[,colSums(is.na(training)) == 0]
+testing <-testing[,colSums(is.na(testing)) == 0]
+
+#Remove columns that are not predictors, like X, user_name, raw_timestamp
+training   <-training[,-c(1:7)]
+testing <-testing[,-c(1:7)]
+dim(training)
+dim(testing) 
+
+```
+## 3. Preparing datasets  
+
+Preparing the data considering training data into 80% as train data and 20% as test data. 
+The are only 20 obs in the testing dataset
+
+
+```{r}
+inTrain <- createDataPartition(y=training$classe, p = 0.8, list = FALSE)
+Newtraining<-training[inTrain,]
+Newtesting<-training[-inTrain,]  
+dim(Newtraining)
+dim(Newtesting) 
+```
+
+## 4. Use Random forest Model to predict results
+
+```{r}
+set.seed(12345)
+Newtraining$classe <- factor(Newtraining$classe)
+Newtesting$classe <- factor(Newtesting$classe)
+modelRF <-  randomForest(classe~. , data=Newtraining)
+
+```
+
+## 5. Prediction with RF
+
+```{r}
+predictRF <- predict(modelRF, Newtesting, type = "class")
+```
+
+## 6. Check the accuracy
+
+```{r}
+accuracy_RF <- confusionMatrix(predictRF, Newtesting$classe)
+accuracy_RF
+```
+
+## 7. Accuracy of the Random Forest model
+
+```{r}
+plot(modelRF, main = "Random Forest Model")
+```
+
+```{r}
+plot(accuracy_RF$table, col = "blue", main = paste("Random Forest Accuracy =", round(accuracy_RF$overall['Accuracy'], 4)))
+```
+
+## 8. Predict on current testing dataset the variable 'classe' value
+
+```{r}
+predictONDATA <-  predict(modelRF, testing, type = "class")
+predictONDATA
+```
+## 9. Use GBM to predict results
+
+```{r}
+FitControlGBM <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
+modFitGBM <- train(classe~ ., method="gbm",data=Newtraining, trControl = FitControlGBM, verbose=FALSE)
+
+
+```
+## 10. Confusion  Matrix using GBM 
+
+```{r}
+predictGBM <- predict(modFitGBM, Newtesting)
+```
+```{r}
+accuracy_FitGBM <- confusionMatrix(data=predictGBM, reference=Newtesting$classe)
+accuracy_FitGBM 
+```
+## 11. Predict on current testing dataset the variable 'classe' value with GBM
+```{r}
+predictONDATAGBM <-  predict(modFitGBM, testing)
+predictONDATAGBM
+```
+## 12. Compare result of the two model: 'They are the same !!!'
+```{r}
+NEqual <- predictONDATA == predictONDATAGBM
+NEqual
+```
+
+
