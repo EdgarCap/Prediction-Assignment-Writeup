@@ -7,7 +7,7 @@ The goal of your project is to predict the manner in which they did the exercise
 
 ## Prediction of the exercice
 
-The variable "classe" in the training is set with this value:
+The variable "classe" in the training dataset have this value:
 
 * "A" the exercice is done arrcording to specification 
 
