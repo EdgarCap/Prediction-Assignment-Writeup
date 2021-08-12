@@ -9,7 +9,7 @@ The goal of your project is to predict the manner in which they did the exercise
 
 The variable "classe" in the training dataset have this value:
 
-* "A" the exercice is done arrcording to specification 
+* "A" the exercice is done according to specification 
 
 * "B" the exercice is done throwing the elbows to the front
 
