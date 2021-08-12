@@ -15,7 +15,7 @@ The variable "classe" in the training dataset have this value:
 
 * "C" the exercice is done lifting the dumbbell only halfway
 
-* "D" the exercice is donelowering the dumbbell only halfway 
+* "D" the exercice is done lowering the dumbbell only halfway 
 
 * "E"  the exercice is done throwing the hips to the front 
 
