@@ -47,8 +47,6 @@ download.file(paste0(url,file_testing),   dest=file_testing,  mode="wb")
 
 training <- read.csv(file_trainging, na.strings=c("NA","#DIV/0!",""))
 testing  <- read.csv(file_testing, na.strings=c("NA","#DIV/0!",""))
-head(training)
-head(testing)
 str(training)
 str(testing)
 
@@ -124,7 +122,52 @@ plot(accuracy_RF$table, col = "blue", main = paste("Random Forest Accuracy =", r
 predictONDATA <-  predict(modelRF, testing, type = "class")
 predictONDATA
 ```
-## 9. Use GBM to predict results
+
+## 9. Improve the model reducing variable that have hight correlation
+
+```{r}
+cor_mat <- cor(Newtraining[,-53])
+highlyCorrelated = findCorrelation(cor_mat, cutoff=0.75)
+names(Newtraining)[highlyCorrelated]
+```
+##10. Subset the training data and leave only the variable "accel_belt_z" the others variables will be omit in the model
+
+```{r}
+Corrtraining <- subset(Newtraining , select = -c(roll_belt, accel_belt_y,total_accel_belt,accel_dumbbell_z,accel_belt_x,pitch_belt,magnet_dumbbell_x, accel_dumbbell_y,magnet_dumbbell_y, accel_arm_x, accel_dumbbell_x,accel_arm_z,magnet_arm_y, magnet_belt_z, accel_forearm_y, gyros_forearm_y, gyros_dumbbell_x,gyros_dumbbell_z,gyros_arm_x))
+Corrtesting <- subset(Newtesting , select = -c(roll_belt, accel_belt_y,total_accel_belt,accel_dumbbell_z,accel_belt_x,pitch_belt,magnet_dumbbell_x, accel_dumbbell_y,magnet_dumbbell_y, accel_arm_x, accel_dumbbell_x,accel_arm_z,magnet_arm_y, magnet_belt_z, accel_forearm_y, gyros_forearm_y, gyros_dumbbell_x,gyros_dumbbell_z,gyros_arm_x))
+Corrtraining$classe <- factor(Corrtraining$classe)
+Corrtesting$classe <- factor(Corrtesting$classe)
+modelCorrRF <-  randomForest(classe~. , data=Corrtraining)
+dim(Corrtraining)
+dim(Corrtesting)
+
+```
+## 11. Prediction with New RF
+
+```{r}
+predictCorrRF <- predict(modelCorrRF, Corrtesting, type = "class")
+```
+
+## 12. Check the accuracy of new model
+The accuracy is similar to the complete RF model but we are using only 34 variables instead of 53 
+
+```{r}
+accuracy_CorrRF <- confusionMatrix(predictCorrRF, Corrtesting$classe)
+accuracy_CorrRF
+```
+
+## 13. Predict on current testing dataset the variable 'classe' value with new model
+
+```{r}
+predictONCorr <-  predict(modelCorrRF, testing, type = "class")
+predictONCorr 
+```
+## 14. Compare result of the two model: "They are the same"
+```{r}
+NEqual <- predictONDATA == predictONCorr
+NEqual
+```
+## 15. Use GBM - Generalized Boosted Regression Models - to predict results
 
 ```{r}
 FitControlGBM <- trainControl(method = "repeatedcv", number = 5, repeats = 1)
@@ -132,7 +175,7 @@ modFitGBM <- train(classe~ ., method="gbm",data=Newtraining, trControl = FitCont
 
 
 ```
-## 10. Confusion  Matrix using GBM 
+## 16. Confusion  Matrix using GBM 
 
 ```{r}
 predictGBM <- predict(modFitGBM, Newtesting)
@@ -141,15 +184,14 @@ predictGBM <- predict(modFitGBM, Newtesting)
 accuracy_FitGBM <- confusionMatrix(data=predictGBM, reference=Newtesting$classe)
 accuracy_FitGBM 
 ```
-## 11. Predict on current testing dataset the variable 'classe' value with GBM
+## 17. Predict on current testing dataset the variable 'classe' value with GBM
 ```{r}
 predictONDATAGBM <-  predict(modFitGBM, testing)
 predictONDATAGBM
 ```
-## 12. Compare result of the two model: 'They are the same !!!'
+## 18. Compare result of the tree model: 'They are the same !!!'
 ```{r}
 NEqual <- predictONDATA == predictONDATAGBM
 NEqual
 ```
-
 
