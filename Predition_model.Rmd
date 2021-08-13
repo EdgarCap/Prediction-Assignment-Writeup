@@ -123,7 +123,7 @@ predictONDATA <-  predict(modelRF, testing, type = "class")
 predictONDATA
 ```
 
-## 9. Improve the model reducing variable that have hight correlation
+## 9. Improve the model reducing variables that have hight correlation
 
 ```{r}
 cor_mat <- cor(Newtraining[,-53])
