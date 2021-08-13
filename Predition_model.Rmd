@@ -69,7 +69,7 @@ dim(training)
 dim(testing) 
 
 ```
-## 3. Preparing datasets  
+## 3. Cross-validation - Preparing datasets  -  
 
 Preparing the data considering training data into 80% as train data and 20% as test data. 
 The are only 20 obs in the testing dataset
