@@ -418,7 +418,7 @@ dim(training)</code></pre>
 <pre><code>## [1] 20 53</code></pre>
 </div>
 <div id="preparing-datasets" class="section level2">
-<h2>3. 3. Cross-validation - Preparing datasets  -</h2>
+<h2>3. Cross-validation - Preparing datasets  -</h2>
 <p>Preparing the data considering training data into 80% as train data and 20% as test data. The are only 20 obs in the testing dataset</p>
 <pre class="r"><code>inTrain &lt;- createDataPartition(y=training$classe, p = 0.8, list = FALSE)
 Newtraining&lt;-training[inTrain,]
