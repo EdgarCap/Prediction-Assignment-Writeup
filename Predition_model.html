@@ -405,7 +405,6 @@ str(training)</code></pre>
 </div>
 <div id="remove-not-significant-variables" class="section level2">
 <h2>2. Remove not significant variables</h2>
-<p>Preparing the data considering training data into 70% as train data and 30% as test data.</p>
 <pre class="r"><code>#Remove variables with near zero variance
 training&lt;-training[,colSums(is.na(training)) == 0]
 testing &lt;-testing[,colSums(is.na(testing)) == 0]
