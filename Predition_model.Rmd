@@ -130,7 +130,7 @@ cor_mat <- cor(Newtraining[,-53])
 highlyCorrelated = findCorrelation(cor_mat, cutoff=0.75)
 names(Newtraining)[highlyCorrelated]
 ```
-##10. Subset the training data and leave only the variable "accel_belt_z" the others variables will be omit in the model
+## 10. Subset the training data and leave the variable "accel_belt_z" the others correlated variables will be omitted in the model
 
 ```{r}
 Corrtraining <- subset(Newtraining , select = -c(roll_belt, accel_belt_y,total_accel_belt,accel_dumbbell_z,accel_belt_x,pitch_belt,magnet_dumbbell_x, accel_dumbbell_y,magnet_dumbbell_y, accel_arm_x, accel_dumbbell_x,accel_arm_z,magnet_arm_y, magnet_belt_z, accel_forearm_y, gyros_forearm_y, gyros_dumbbell_x,gyros_dumbbell_z,gyros_arm_x))
